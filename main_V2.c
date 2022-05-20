@@ -12,7 +12,7 @@
 #define PI 3.1415926535897932385
 
 
-//gcc -Wall -Wfatal-errors main_V2.c temporeltab.c recherche_note.c frequentieltab.c affichage.c $(sdl2-config --cflags --libs) -lgsl -lm
+//gcc -Wall -Wfatal-errors main_V2.c temporeltab.c recherche_note.c frequentieltab.c affichage_piano.c $(sdl2-config --cflags --libs) -lgsl -lm -lSDL2_mixemi -lSDL2_ttf
 
 
 int main(int argc, char* argv[]) {
@@ -44,17 +44,33 @@ int main(int argc, char* argv[]) {
 	
 	unsigned int* pcolor = malloc(sizeof(unsigned int));
 	unsigned int* ppos = malloc(sizeof(unsigned int));
+	char* note = malloc(16 * sizeof(char));
+	int* pf = malloc(sizeof(int));
+	unsigned int* poctave = malloc(sizeof(unsigned int));
 	
-	recherche_note(fe, longueur, abs_tabTF, pcolor, ppos);
+	recherche_note(fe, longueur, abs_tabTF, pcolor, ppos, note, pf, poctave);
 	
 	/*-- Affichage dynamique de la note --*/
 	
-	double keyduration = *pkeyduration; //Durée de la note 
+	double keyduration = *pkeyduration * 1000; //Durée de la note en ms
 	unsigned int color = *pcolor;
 	unsigned int pos = *ppos;
+	int f = *pf;
+	unsigned int octave = *poctave;
+		
+	affichage_piano(color, pos, filename, fe, keyduration, note, f, octave);
 	
-	affichage_piano(color, pos, filename, fe, keyduration);
-
+	/*-- Libération --*/
+	
+	free(pfe);
+	free(ptaille);
+	free(pkeyduration);
+	free(plongueur);
+	free(pcolor);
+	free(ppos);
+	free(note);
+	free(pf);
+	
 	return(0);
 	
 }

@@ -3,8 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+#include <SDL2/SDL_ttf.h>
 
 
 #define SCREENWIDTH 833
@@ -22,6 +23,22 @@ void SDL_ExitWithError1(const char* message) {
 	
 }
 
+void Mix_ExitWithError1(const char* message) {
+
+	SDL_Log("ERREUR : %s > %s\n", message, Mix_GetError());
+	Mix_Quit();
+	exit(EXIT_FAILURE);
+	
+}
+
+void TTF_ExitWithError1(const char* message) {
+
+	SDL_Log("ERREUR : %s > %s\n", message, TTF_GetError());
+	TTF_Quit();
+	exit(EXIT_FAILURE);
+	
+}
+
 void SDL_ExitWithError2(const char* message, SDL_Window* window, SDL_Renderer* renderer) {
 
 	SDL_Log("ERREUR : %s > %s\n", message, SDL_GetError());
@@ -32,6 +49,45 @@ void SDL_ExitWithError2(const char* message, SDL_Window* window, SDL_Renderer* r
 	
 }
 
+void Mix_ExitWithError2(const char* message, Mix_Chunk * background_sound) {
+	
+	SDL_Log("ERREUR : %s > %s\n", message, Mix_GetError());
+	Mix_FreeChunk(background_sound);
+	Mix_Quit();
+	exit(EXIT_FAILURE);
+	
+}
+
+void TTF_ExitWithError2(const char* message, TTF_Font * ourFont) {
+
+	SDL_Log("ERREUR : %s > %s\n", message, SDL_GetError());
+	TTF_CloseFont(ourFont);
+	TTF_Quit();
+	exit(EXIT_FAILURE);
+	
+}
+
+void TTF_ExitWithError3(const char* message, TTF_Font * ourFont, SDL_Surface * surfaceText) {
+
+	SDL_Log("ERREUR : %s > %s\n", message, SDL_GetError());
+	SDL_FreeSurface(surfaceText);
+	TTF_CloseFont(ourFont);
+	TTF_Quit();
+	exit(EXIT_FAILURE);
+	
+}
+
+void TTF_ExitWithError4(const char* message, TTF_Font * ourFont, SDL_Surface * surfaceText, SDL_Texture * textureText) {
+
+	SDL_Log("ERREUR : %s > %s\n", message, SDL_GetError());
+	SDL_DestroyTexture(textureText);
+	SDL_FreeSurface(surfaceText);
+	TTF_CloseFont(ourFont);
+	TTF_Quit();
+	exit(EXIT_FAILURE);
+	
+}
+	
 void SDL_LimitFPS(unsigned int frame_limit) {
 
 	unsigned int ticks = SDL_GetTicks();	
@@ -43,11 +99,54 @@ void SDL_LimitFPS(unsigned int frame_limit) {
 		
 }
 
+char* create_char(char* note, int f, unsigned int octave) {
+
+	char* f0 = calloc(16, sizeof(char)); // calloc obligatoire ici pour éviter les caractères parasites en fin de chaîne
+	int power = 0;
+	
+	int rest = f;
+
+	while (f > 0) {
+	
+		f = f/10;
+		power++;
+		
+	}
+
+	int denom;
+	
+	for (int i = 0; i < power; i++) {
+		
+		denom = pow(10, power - 1 - i);
+		f0[i] = floor(rest/denom) + '0'; //Int To Char
+		rest = rest%denom;
+		
+	}
+	
+	char* freq1 = "f = ";
+	char* freq2 = " Hz";
+	char* freq3 = " ; note : ";
+	char* freq4 = " ; octave : ";
+	//char* charoctave = octave + '0';
+	
+	char* buffer = malloc(128 * sizeof(char));
+	
+	strcat(strcpy(buffer, freq1), f0);
+	strcat(buffer, freq2);
+	strcat(buffer, freq3);
+	strcat(buffer, note);
+	strcat(buffer, freq4);
+	//strcat(buffer, charoctave);	
+	
+	return(buffer);
+	
+}
+
 
 /*----- Fin Fonction annexes d'erreur ---------------------------------------------------------*/
 	
 
-void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration) {
+void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, int f, unsigned int octave) {
 	
 	
 	SDL_Window* window = NULL;
@@ -60,11 +159,28 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) 
 		SDL_ExitWithError1("Initialisation SDL échouée");
 	
-	if (Mix_OpenAudio(fe, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)<0) printf("erroer\n");
+	
+/*----- Lancement Module Son Mix -------------------------------------------------------------*/
+
+
+	if (Mix_OpenAudio(fe, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024)<0) 
+		Mix_ExitWithError1("Initialisation Mix échouée");
+	
 	Mix_Chunk * background_sound = Mix_LoadWAV(filename);
 
+	if (background_sound == NULL) Mix_ExitWithError1("Impossible de charger le son");
+	
+
+/*----- Lancement Module Police TTF -----------------------------------------------------------*/
 
 
+	if (TTF_Init() == -1) TTF_ExitWithError1("Initialisation TTF échouée");
+	
+	TTF_Font * ourFont = TTF_OpenFont("unispace_bold.ttf",32);
+	
+	if (ourFont == NULL) TTF_ExitWithError1("Impossible de charger la police");
+	
+	
 /*----- Création fenêtre + rendu  -------------------------------------------------------------*/
 	
 	
@@ -72,7 +188,26 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 		SDL_ExitWithError1("Impossible de créer la fénêtre et le rendu");
 	
 	
-/*---------------------------------------------------------------------------------------------*/
+/*----- Suite Lancement Module Police TTF -----------------------------------------------------*/
+
+	
+	char* charnote = create_char(note, f, octave);
+	
+	SDL_Color textcolor = {255,255,255}; // On écrit en blanc
+	SDL_Surface * surfaceText = TTF_RenderText_Solid(ourFont, charnote, textcolor);
+	
+	if (surfaceText == NULL) 
+	TTF_ExitWithError2("Impossible de générer la surface de texte",ourFont);
+						
+	SDL_Texture * textureText = SDL_CreateTextureFromSurface(renderer, surfaceText);
+					
+	if (textureText == NULL) 
+		TTF_ExitWithError3("Impossible de générer la texture du texte", ourFont, surfaceText);
+							
+	SDL_FreeSurface(surfaceText);
+	
+	
+/*----- PROCESS -------------------------------------------------------------------------------*/
 
 
 	SDL_bool program_launched = SDL_TRUE;
@@ -92,8 +227,8 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 		
 	-----*/
 	
-	int i; 
 	SDL_Rect rectangle;
+	int i; 
 	
 	// Delay
 	
@@ -141,6 +276,8 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 	}
 
 	
+	FILE* pcp = fopen("piano.txt","wb"); //Vérifier les abscisses et les couleurs des touches
+	
 	while (program_launched) {
 
 		SDL_Event event;
@@ -155,7 +292,19 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 					
 					case SDLK_b:
 						//printf("Touche B enfoncée\n");
-								
+						
+						// Ecriture Texte
+					
+
+						rectangle.x = 10;
+						rectangle.y = 10;
+						rectangle.w = 200;
+						rectangle.h = 30;
+						
+						if (SDL_RenderCopy(renderer, textureText, NULL, &rectangle) != 0) 
+							TTF_ExitWithError4("Impossible de copier la texture dans le rendu", ourFont, surfaceText, textureText);
+	
+	
 						// Octave 0
 						
 							// 2 Touches Blanches
@@ -434,9 +583,16 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 						
 						SDL_RenderPresent(renderer);	
 						SDL_Delay(duration);
-						
 							
 						// Touche en surbrillance
+						
+							// Vérification des abscisses et des couleurs 
+							
+						for (i = 0; i < N_keysb + N_keysn; i ++) {
+						
+							fprintf(pcp,"%d %d\n", abscisses[i][0], abscisses[i][1]);
+							
+						}
 						
 						unsigned int keyabscisse = abscisses[pos][0];
 						unsigned int R_neighborcolor = 2; // différents de 0 et 1
@@ -451,15 +607,16 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 							
 						}
 						
-						if (pos - 1 > -1) {
+						if (pos - 1 > 0) {
 						
 							L_neighborcolor = abscisses[pos - 1][1];
-							L_neighborcolor = abscisses[pos - 1][0];
+							L_neighborpos = abscisses[pos - 1][0];
 							
 						}
 						
-						if (color == 1) {
 						
+						if (color == 1) {
+							
 							if (R_neighborcolor == 0 && L_neighborcolor == 0) { // 2 voisins noirs
 						 
 								
@@ -500,12 +657,14 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 								
 								// Son
 			
-														
+													
 								SDL_RenderPresent(renderer);	
-								Mix_PlayChannel(1,background_sound,0);
+								
+								if (Mix_PlayChannel(1,background_sound,0) == -1) 
+									Mix_ExitWithError2("Impossible de jouer le son",background_sound);
+									
 								SDL_Delay(keyduration);
-								Mix_FreeChunk(background_sound);
-								Mix_Quit();
+
 								
 								
 								// Retour à l'état initial
@@ -583,11 +742,12 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 			
 														
 								SDL_RenderPresent(renderer);	
-								Mix_PlayChannel(1,background_sound,0);
-								SDL_Delay(keyduration);
-								Mix_FreeChunk(background_sound);
-								Mix_Quit();
 								
+								if (Mix_PlayChannel(1,background_sound,0) == -1) 
+									Mix_ExitWithError2("Impossible de jouer le son",background_sound);
+									
+								SDL_Delay(keyduration);
+															
 								
 								// Retour à l'état initial
 				
@@ -655,11 +815,12 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 			
 														
 								SDL_RenderPresent(renderer);	
-								Mix_PlayChannel(1,background_sound,0);
-								SDL_Delay(keyduration);
-								Mix_FreeChunk(background_sound);
-								Mix_Quit();
 								
+								if (Mix_PlayChannel(1,background_sound,0) == -1) 
+									Mix_ExitWithError2("Impossible de jouer le son",background_sound);
+									
+								SDL_Delay(keyduration);
+															
 								
 								// Retour à l'état initial
 				
@@ -713,11 +874,12 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 			
 														
 								SDL_RenderPresent(renderer);	
-								Mix_PlayChannel(1,background_sound,0);
-								SDL_Delay(keyduration);
-								Mix_FreeChunk(background_sound);
-								Mix_Quit();
 								
+								if (Mix_PlayChannel(1,background_sound,0) == -1) 
+									Mix_ExitWithError2("Impossible de jouer le son",background_sound);
+									
+								SDL_Delay(keyduration);
+																
 								
 								// Retour à l'état initial
 				
@@ -761,10 +923,11 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 							// Son
 								
 	
-							Mix_PlayChannel(1,background_sound,0);
+							if (Mix_PlayChannel(1,background_sound,0) == -1) 
+									Mix_ExitWithError2("Impossible de jouer le son",background_sound);
+									
 							SDL_Delay(keyduration);
-							Mix_FreeChunk(background_sound);
-							Mix_Quit();
+
 							
 							
 							// Retour à l'état initial
@@ -784,8 +947,7 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 							
 							SDL_RenderPresent(renderer);
 							
-						}
-						
+						}						
 							
 						SDL_Delay(duration);
 						
@@ -815,7 +977,18 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 /*----- Libérations ---------------------------------------------------------------------------*/
 	
 	
+	fclose(pcp);
 	free(abscisses);
+	
+	
+	TTF_Quit();
+	
+	
+	Mix_FreeChunk(background_sound);
+	Mix_Quit();
+	
+	
+	SDL_DestroyTexture(textureText);
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	SDL_Quit();

@@ -141,11 +141,10 @@ double argmax(double fe, unsigned int longueur, double* abs_tabTF) {
 		
 }
 
-void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* pcolor, unsigned int* ppos) {
+void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* pcolor, unsigned int* ppos, char* note, int* pf, unsigned int* poctave) {
 
 	double f0; //Fréquence de la note jouée
 	f0 = argmax(fe, longueur, abs_tabTF);
-	
 	
 	char nomnote[10];
 	char nomnoteprec[10];
@@ -188,6 +187,10 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 	
 	pcolor[0] = color;
 	ppos[0] = pos;
+	strcpy(note,nomnote);
+	pf[0] = frequencenote;
+	poctave[0] = octave;
+	
 	fclose(diconote);
 	printf("----------\n\n");
 	printf ("La note est : <%s> de frequence = %f Hz (octave %d)\n\n" ,nomnote  ,frequencenote,octave);
