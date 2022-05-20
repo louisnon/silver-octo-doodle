@@ -141,6 +141,15 @@ double argmax(double fe, unsigned int longueur, double* abs_tabTF) {
 		
 }
 
+double absolue(double f1, double f2) {
+
+	double df = f2 - f1;
+	
+	if (df > 0) return(df);
+	else return(-df);
+	
+}
+
 void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* ppos, char* note, double* pf, unsigned int* poctave) {
 
 	double f0; //Fréquence de la note jouée
@@ -158,20 +167,21 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 	FILE* diconote = fopen("diconote.txt","r");
 
 	while (f0 > frequencenote) {
-	
+	 	
+	 	frequencenoteprec = frequencenote;
+		strcpy(nomnoteprec,nomnote);
+		octaveprec = octave;
+		posprec = pos;
+		
 		fscanf (diconote,"%d",&octave);
 		fscanf (diconote,"%s",nomnote);
 		fscanf (diconote,"%lf",&frequencenote);
 		fscanf (diconote,"%d",&pos);
 		
-		frequencenoteprec = frequencenote;
-		strcpy(nomnoteprec,nomnote);
-		octaveprec = octave;
-		posprec = pos;
 	
 	}
 	
-	if ((f0 - frequencenoteprec) < (frequencenote - f0)) {
+	if (absolue(f0,frequencenoteprec) < absolue(frequencenote,f0)) {
 	
 		frequencenote = frequencenoteprec;
 		strcpy(nomnote,nomnoteprec);

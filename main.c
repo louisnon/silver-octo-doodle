@@ -12,14 +12,21 @@
 #define PI 3.1415926535897932385
 
 
-//gcc -Wall -Wfatal-errors main_V2.c temporeltab.c recherche_note.c frequentieltab.c affichage_piano.c $(sdl2-config --cflags --libs) -lgsl -lm -lSDL2_mixemi -lSDL2_ttf
+//gcc -Wall -Wfatal-errors main.c temporeltab.c recherche_note.c frequentieltab.c affichage_piano.c $(sdl2-config --cflags --libs) -lgsl -lm -lSDL2_mixer -lSDL2_ttf
 
 
 int main(int argc, char* argv[]) {
 
 	/*-- Tableau temporel --*/
 	
-	char* filename = "500Hz.wav"; //494 en vrai
+	char filename[64];
+	
+	printf("Entrez le nom du fichier audio .wav à analyser :\n");
+	scanf("%s",filename);
+	printf("Nom du fichier choisi : %s\n",filename);
+	
+	//char* filename = "500Hz.wav"; //494 en vrai
+	//char* filename = "370Hz.wav";
 	
 	int* pfe = malloc(sizeof(int)); //Pointeur vers fréquence d'échantillonnage
 	unsigned int* ptaille = malloc(sizeof(unsigned int)); //Pointeur vers le nombre d'ech

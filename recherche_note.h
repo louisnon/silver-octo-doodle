@@ -7,6 +7,8 @@ unsigned int shift(unsigned int indice, unsigned int longueur, double* abs_tabTF
 
 double argmax(double fe, unsigned int longueur, double* abs_tabTF);
 
+double absolue(double f1, double f2);
+
 void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* ppos, char* note, double* pf, unsigned int* poctave);
 
 #endif
