@@ -42,23 +42,21 @@ int main(int argc, char* argv[]) {
 	
 	unsigned int longueur = *plongueur;
 	
-	unsigned int* pcolor = malloc(sizeof(unsigned int));
 	unsigned int* ppos = malloc(sizeof(unsigned int));
 	char* note = malloc(16 * sizeof(char));
 	double* pf = malloc(sizeof(double));
 	unsigned int* poctave = malloc(sizeof(unsigned int));
 	
-	recherche_note(fe, longueur, abs_tabTF, pcolor, ppos, note, pf, poctave);
+	recherche_note(fe, longueur, abs_tabTF, ppos, note, pf, poctave);
 	
 	/*-- Affichage dynamique de la note --*/
 	
 	double keyduration = *pkeyduration * 1000; //Durée de la note en ms
-	unsigned int color = *pcolor;
 	unsigned int pos = *ppos;
 	double f = *pf;
 	unsigned int octave = *poctave;
 		
-	affichage_piano(color, pos, filename, fe, keyduration, note, f, octave);
+	affichage_piano(pos, filename, fe, keyduration, note, f, octave);
 	
 	/*-- Libération --*/
 	
@@ -66,7 +64,6 @@ int main(int argc, char* argv[]) {
 	free(ptaille);
 	free(pkeyduration);
 	free(plongueur);
-	free(pcolor);
 	free(ppos);
 	free(note);
 	free(pf);

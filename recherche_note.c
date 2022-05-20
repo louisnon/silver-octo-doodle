@@ -141,7 +141,7 @@ double argmax(double fe, unsigned int longueur, double* abs_tabTF) {
 		
 }
 
-void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* pcolor, unsigned int* ppos, char* note, double* pf, unsigned int* poctave) {
+void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* ppos, char* note, double* pf, unsigned int* poctave) {
 
 	double f0; //Fréquence de la note jouée
 	f0 = argmax(fe, longueur, abs_tabTF);
@@ -152,8 +152,6 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 	unsigned int octaveprec;
 	double frequencenote = 0;
 	double frequencenoteprec;
-	unsigned int color;
-	unsigned int colorprec;
 	unsigned int pos;
 	unsigned int posprec;
 	
@@ -164,13 +162,11 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 		fscanf (diconote,"%d",&octave);
 		fscanf (diconote,"%s",nomnote);
 		fscanf (diconote,"%lf",&frequencenote);
-		fscanf (diconote,"%d",&color);
 		fscanf (diconote,"%d",&pos);
 		
 		frequencenoteprec = frequencenote;
 		strcpy(nomnoteprec,nomnote);
 		octaveprec = octave;
-		colorprec = color;
 		posprec = pos;
 	
 	}
@@ -180,12 +176,10 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 		frequencenote = frequencenoteprec;
 		strcpy(nomnote,nomnoteprec);
 		octave = octaveprec;
-		color = colorprec;
 		pos = posprec;
 		
 	}
 	
-	pcolor[0] = color;
 	ppos[0] = pos;
 	strcpy(note,nomnote);
 	pf[0] = frequencenote;
@@ -196,13 +190,8 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 	printf ("La note est : <%s> de frequence = %f Hz (octave %d)\n\n" ,nomnote  ,frequencenote,octave);
 	printf("----------\n\n");
 	
-	char* colorchar;
-	
-	if (color) colorchar = "Blanc";
-	else colorchar = "Noir";
-	
 	printf("----------\n\n");
-	printf("La couleur de la note sur le piano est : %s\nLa position de la note sur le piano est : %d\n\n",colorchar,pos);
+	printf("La position de la note sur le piano est : %d\n\n",pos);
 	printf("----------\n\n");
 	
 }	

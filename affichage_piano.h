@@ -25,6 +25,6 @@ void SDL_LimitFPS(unsigned int frame_limit);
 
 char* create_char(char* note, double f, unsigned int octave);
 
-void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, double f, unsigned int octave);
+void affichage_piano(unsigned int pos, char* filename, int fe, double keyduration, char* note, double f, unsigned int octave);
 
 #endif

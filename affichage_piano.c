@@ -178,7 +178,7 @@ char* create_char(char* note, double f, unsigned int octave) {
 /*----- Fin Fonction annexes d'erreur ---------------------------------------------------------*/
 	
 
-void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, double f, unsigned int octave) {
+void affichage_piano(unsigned int pos, char* filename, int fe, double keyduration, char* note, double f, unsigned int octave) {
 	
 	
 	SDL_Window* window = NULL;
@@ -647,8 +647,13 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 							
 						}
 						
+						// Touches Blanches 
 						
 						if (keycolor == 1) {
+							
+							printf("----------\n\n");
+							printf("La couleur de la touche est : Blanc\n\n");
+							printf("----------\n\n");
 							
 							if (R_neighborcolor == 0 && L_neighborcolor == 0) { // 2 voisins noirs
 						 
@@ -935,9 +940,13 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 							
 						}
 						
+						// Touches Noires 
+						
 						else if (keycolor == 0) {
 						
-							// Touches Noires
+							printf("----------\n\n");
+							printf("La couleur de la touche est : Noir\n\n");
+							printf("----------\n\n");
 							
 							if (SDL_SetRenderDrawColor(renderer, 255, 0, 255, SDL_ALPHA_OPAQUE) != 0) 
 								SDL_ExitWithError2("Impossible de charger la couleur pour le rendu", window, renderer);	
