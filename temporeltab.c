@@ -50,7 +50,7 @@ double hamming(unsigned int taille, int i) {
 	
 }
 
-double* temporeltab(char* filename, int* pfe, unsigned int* ptaille) {
+double* temporeltab(char* filename, int* pfe, unsigned int* ptaille, double* pkeyduration) {
 
 
 /*----- Initialisation des variables ----------------------------------------------------------*/
@@ -148,6 +148,7 @@ double* temporeltab(char* filename, int* pfe, unsigned int* ptaille) {
 	printf("----------\n\n");
 	
 	time = nb_ech*1./header.frequency;
+	pkeyduration[0] = time;
 	
 	printf("----------\n\n");
 	printf("Temps total du spectrogramme : %f s\n\n",time);

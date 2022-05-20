@@ -5,7 +5,7 @@
 #include "temporeltab.h"
 #include "frequentieltab.h"
 #include "recherche_note.h"
-#include "affichage.h"
+#include "affichage_piano.h"
 
 #define REAL(z,i) ((z)[2*(i)])
 #define IMAG(z,i) ((z)[2*(i)+1])
@@ -21,18 +21,18 @@ int main(int argc, char* argv[]) {
 	
 	char* filename = "500Hz.wav"; //494 en vrai
 	
-	int* pfe = malloc(sizeof(int)); //Pointeur de la fréquence d'échantillonnage
-	unsigned int* ptaille = malloc(sizeof(unsigned int)); //Pointeur du nombre d'ech
-	
+	int* pfe = malloc(sizeof(int)); //Pointeur vers fréquence d'échantillonnage
+	unsigned int* ptaille = malloc(sizeof(unsigned int)); //Pointeur vers le nombre d'ech
+	double* pkeyduration = malloc(sizeof(double)); //Pointeur vers la durée de la note
 	
 	double* tabt = NULL;
-	tabt = temporeltab(filename,pfe,ptaille);
+	tabt = temporeltab(filename, pfe, ptaille, pkeyduration);
 	
 	/*-- Tableau fréquentiel --*/
 	
 	int fe = *pfe; //Fréquence d'échantillonnage
 	unsigned int taille = *ptaille; //Nombre d'échantillons temporels
-
+	
 	unsigned int* plongueur = malloc(sizeof(unsigned int)); //Pointeur du nombre d'ech en 2^
 	
 	double* abs_tabTF = NULL;
@@ -49,10 +49,11 @@ int main(int argc, char* argv[]) {
 	
 	/*-- Affichage dynamique de la note --*/
 	
+	double keyduration = *pkeyduration; //Durée de la note 
 	unsigned int color = *pcolor;
 	unsigned int pos = *ppos;
 	
-	affichage();
+	affichage_piano(color, pos, filename, fe, keyduration);
 
 	return(0);
 	

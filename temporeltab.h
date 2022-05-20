@@ -20,6 +20,6 @@ struct wavfile { //définit la structure de l entete d un wave
 
 double hamming(double T, double t);
 
-double* temporeltab(char* filename, int* pfe, unsigned int* pnb_ech);
+double* temporeltab(char* filename, int* pfe, unsigned int* pnb_ech, double* pkeyduration);
 
 #endif
