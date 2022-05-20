@@ -141,7 +141,7 @@ double argmax(double fe, unsigned int longueur, double* abs_tabTF) {
 		
 }
 
-void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* pcolor, unsigned int* ppos, char* note, int* pf, unsigned int* poctave) {
+void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* pcolor, unsigned int* ppos, char* note, double* pf, unsigned int* poctave) {
 
 	double f0; //Fréquence de la note jouée
 	f0 = argmax(fe, longueur, abs_tabTF);

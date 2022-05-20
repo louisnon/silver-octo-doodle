@@ -99,44 +99,76 @@ void SDL_LimitFPS(unsigned int frame_limit) {
 		
 }
 
-char* create_char(char* note, int f, unsigned int octave) {
+char* create_char(char* note, double f, unsigned int octave) {
 
-	char* f0 = calloc(16, sizeof(char)); // calloc obligatoire ici pour éviter les caractères parasites en fin de chaîne
+	char* f0_int = calloc(16, sizeof(char)); // Calloc obligatoire ici pour éviter les caractères parasites en fin de chaîne
+	char* f0_float = calloc(16, sizeof(char)); // Idem
+	
 	int power = 0;
 	
 	int rest = f;
-
-	while (f > 0) {
 	
-		f = f/10;
+	while (rest > 0) {
+	
+		rest = rest/10;
 		power++;
 		
 	}
-
+	
 	int denom;
+	rest = f;
 	
 	for (int i = 0; i < power; i++) {
 		
 		denom = pow(10, power - 1 - i);
-		f0[i] = floor(rest/denom) + '0'; //Int To Char
+		f0_int[i] = floor(rest/denom) + '0'; //Int To Char
+		rest = rest%denom;
+		
+	}
+	
+	rest = f;
+	double diff = f - rest; // Flottant compris entre 0 et 1 pour pouvoir récupérer les 2 premières décimales de la fréquence f
+	int decimales = diff * 100; // 2 Premières décimales
+	
+	power = 0;
+	
+	rest = decimales;
+	
+	while (rest > 0) {
+	
+		rest = rest/10;
+		power++;
+		
+	}
+	
+	rest = decimales;
+	
+	for (int i = 0; i < power; i++) {
+		
+		denom = pow(10, power - 1 - i);
+		f0_float[i] = floor(rest/denom) + '0'; //Int To Char
 		rest = rest%denom;
 		
 	}
 	
 	char* freq1 = "f = ";
-	char* freq2 = " Hz";
-	char* freq3 = " ; note : ";
-	char* freq4 = " ; octave : ";
-	//char* charoctave = octave + '0';
+	char* freq2 = " . ";
+	char* freq3 = " Hz";
+	char* freq4 = " ; note : ";
+	char* freq5 = " ; octave : ";
+	char* charoctave = calloc(2,sizeof(char)); // On ne peut pas utiliser strcat juste pour un caractère, on a besoin d'une chaîne
+	charoctave[0] = octave + '0';
 	
 	char* buffer = malloc(128 * sizeof(char));
 	
-	strcat(strcpy(buffer, freq1), f0);
+	strcat(strcpy(buffer, freq1), f0_int);
 	strcat(buffer, freq2);
+	strcat(buffer, f0_float);
 	strcat(buffer, freq3);
-	strcat(buffer, note);
 	strcat(buffer, freq4);
-	//strcat(buffer, charoctave);	
+	strcat(buffer, note);
+	strcat(buffer, freq5);
+	strcat(buffer, charoctave);	
 	
 	return(buffer);
 	
@@ -146,7 +178,7 @@ char* create_char(char* note, int f, unsigned int octave) {
 /*----- Fin Fonction annexes d'erreur ---------------------------------------------------------*/
 	
 
-void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, int f, unsigned int octave) {
+void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, double f, unsigned int octave) {
 	
 	
 	SDL_Window* window = NULL;
@@ -298,7 +330,7 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 
 						rectangle.x = 10;
 						rectangle.y = 10;
-						rectangle.w = 200;
+						rectangle.w = 400;
 						rectangle.h = 30;
 						
 						if (SDL_RenderCopy(renderer, textureText, NULL, &rectangle) != 0) 
@@ -595,6 +627,7 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 						}
 						
 						unsigned int keyabscisse = abscisses[pos][0];
+						unsigned int keycolor = abscisses[pos][1];
 						unsigned int R_neighborcolor = 2; // différents de 0 et 1
 						unsigned int L_neighborcolor = 2; 
 						unsigned int R_neighborpos = 0; // différents des abscisses des touches de piano
@@ -615,7 +648,7 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 						}
 						
 						
-						if (color == 1) {
+						if (keycolor == 1) {
 							
 							if (R_neighborcolor == 0 && L_neighborcolor == 0) { // 2 voisins noirs
 						 
@@ -902,7 +935,7 @@ void affichage_piano(unsigned int color, unsigned int pos, char* filename, int f
 							
 						}
 						
-						else if (color == 0) {
+						else if (keycolor == 0) {
 						
 							// Touches Noires
 							

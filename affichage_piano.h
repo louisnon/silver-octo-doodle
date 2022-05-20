@@ -23,8 +23,8 @@ void TTF_ExitWithError4(const char* message, TTF_Font * ourFont, SDL_Surface * s
 
 void SDL_LimitFPS(unsigned int frame_limit);
 
-char* create_char(char* note, int f, unsigned int octave);
+char* create_char(char* note, double f, unsigned int octave);
 
-void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, int f, unsigned int octave);
+void affichage_piano(unsigned int color, unsigned int pos, char* filename, int fe, double keyduration, char* note, double f, unsigned int octave);
 
 #endif
