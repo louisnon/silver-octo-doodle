@@ -1,7 +1,7 @@
 #ifndef __AFFICHAGE_PIANO_H__
 #define __AFFICHAGE_PIANO_H__
 
-#include <SDL.h>
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 #include <SDL2/SDL_ttf.h>
 

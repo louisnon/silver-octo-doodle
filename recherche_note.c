@@ -82,11 +82,6 @@ double argmax(double fe, unsigned int longueur, double* abs_tabTF) {
 	printf("----------\n\n");
 	printf("Le pas en fréquence pour la recherche de la note est df = %lf Hz\n\n",df);
 	printf("----------\n\n");
-	
-	// https://fr.wikipedia.org/wiki/Fr%C3%A9quences_des_touches_du_piano
-	// Intervalle de fréquences des touches de piano 
-	//double fmin = 27.5;
-	//double fmax = 4186.01;
 		
 	// Fréquence recherchée
 	double f0;
@@ -153,7 +148,12 @@ double absolue(double f1, double f2) {
 void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigned int* ppos, char* note, double* pf, unsigned int* poctave) {
 
 	double f0; //Fréquence de la note jouée
+	
+	// Produit spectral
+	
 	f0 = argmax(fe, longueur, abs_tabTF);
+	
+	// Recherche dans le fichier texte
 	
 	char nomnote[10];
 	char nomnoteprec[10];
@@ -181,6 +181,8 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 	
 	}
 	
+	// Sélection de la fréquence la plus proche de celle détectée
+	
 	if (absolue(f0,frequencenoteprec) < absolue(frequencenote,f0)) {
 	
 		frequencenote = frequencenoteprec;
@@ -197,7 +199,7 @@ void recherche_note(double fe, unsigned int longueur, double* abs_tabTF, unsigne
 	
 	fclose(diconote);
 	printf("----------\n\n");
-	printf ("La note est : <%s> de frequence = %f Hz (octave %d)\n\n" ,nomnote  ,frequencenote,octave);
+	printf ("La note est : <%s> de frequence = %f Hz (octave %d)\n\n" ,													nomnote  ,frequencenote,octave);
 	printf("----------\n\n");
 	
 	printf("----------\n\n");

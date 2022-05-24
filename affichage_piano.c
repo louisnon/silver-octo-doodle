@@ -240,13 +240,10 @@ void affichage_piano(unsigned int pos, char* filename, int fe, double keyduratio
 	
 	
 /*----- PROCESS -------------------------------------------------------------------------------*/
-
-
-	SDL_bool program_launched = SDL_TRUE;
 	
-	/*-----
+	/*-----*/
 	
-	unsigned int frame_limit = 0;
+	/*unsigned int frame_limit = 0;
 		
 	// 60 FPS (1000/60)
 		
@@ -254,13 +251,15 @@ void affichage_piano(unsigned int pos, char* filename, int fe, double keyduratio
 	SDL_LimitFPS(frame_limit); // Délai pour limiter à 60 fps
 	frame_limit = SDL_GetTicks() + FPS_LIMIT;
 	
-	printf("Temps écoulé : %d ms\n",ticks);
+	printf("Temps écoulé : %d ms\n",ticks);*/
 		
 		
-	-----*/
+	/*-----*/
 	
 	SDL_Rect rectangle;
 	int i; 
+	
+	SDL_bool program_launched = SDL_TRUE;
 	
 	// Delay
 	

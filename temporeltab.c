@@ -67,7 +67,7 @@ double* temporeltab(char* filename, int* pfe, unsigned int* ptaille, double* pke
 
 /*----- Sélection du fichier audio ------------------------------------------------------------*/
 
-
+	printf("\n");
 	printf("----------\n\n");
 	printf("Nom du fichier choisi : %s\n\n",filename);
 	printf("----------\n\n");
@@ -205,7 +205,6 @@ double* temporeltab(char* filename, int* pfe, unsigned int* ptaille, double* pke
 		
 	}
 	
-	fclose(pt);
 	
 	printf("----------\n\n");
 	printf("Nombre d'échantillons temporels lus : %d\n\n",i);
@@ -214,7 +213,8 @@ double* temporeltab(char* filename, int* pfe, unsigned int* ptaille, double* pke
 
 /*----- Fin Remplissage des tableaux ----------------------------------------------------------*/
 
-	
+
+	fclose(pt);
 	return(tabt);
 	
 }
